@@ -31,8 +31,11 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-
-import pyglet
+try:
+    import pyglet
+except ImportError as e:
+    print(e)
+    pass
 
 class Parser(object):
     """This defines a generalized parse dispatcher; all parse functions

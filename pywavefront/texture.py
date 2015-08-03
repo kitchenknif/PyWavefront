@@ -31,8 +31,11 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-
-from pyglet.gl import *
+try:
+    from pyglet.gl import *
+except ImportError as e:
+    print(e)
+    pass
 
 class Texture(object):
     def __init__(self, path):

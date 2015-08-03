@@ -32,7 +32,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
-from pyglet.gl import *
+try:
+    from pyglet.gl import *
+except ImportError as e:
+    print(e)
+    pass
 
 import pywavefront.parser as parser
 import pywavefront.texture as texture

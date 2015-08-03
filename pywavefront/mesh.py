@@ -32,7 +32,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
-from pyglet.gl import *
+try:
+    from pyglet.gl import *
+except ImportError as e:
+    print(e)
+    pass
 
 class Mesh(object):
     """This is a basic mesh for drawing using OpenGL. Interestingly, it does
