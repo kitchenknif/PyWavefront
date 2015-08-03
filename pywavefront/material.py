@@ -35,6 +35,7 @@
 try:
     from pyglet.gl import *
 except ImportError as e:
+    pyglet = None
     print(e)
     pass
 
@@ -92,25 +93,31 @@ class Material(object):
 
     def gl_light(self, lighting):
         """Return a GLfloat with length 4, containing the 4 lighting values."""
-        return (GLfloat * 4)(*(lighting))
+        if pyglet:
+            return (GLfloat * 4)(*(lighting))
+        else:
+            print("pyglet not loaded, can't to OpenGL Voodoo.")
 
     def draw(self, face=GL_FRONT_AND_BACK):
-        if self.texture:
-            self.texture.draw()
+        if pyglet:
+            if self.texture:
+                self.texture.draw()
+            else:
+                glDisable(GL_TEXTURE_2D)
+
+            glMaterialfv(face, GL_DIFFUSE, self.gl_light(self.diffuse) )
+            glMaterialfv(face, GL_AMBIENT, self.gl_light(self.ambient) )
+            glMaterialfv(face, GL_SPECULAR, self.gl_light(self.specular) )
+            glMaterialfv(face, GL_EMISSION, self.gl_light(self.emissive) )
+            glMaterialf(face, GL_SHININESS, self.shininess)
+
+            if self.gl_floats is None:
+                self.gl_floats = (GLfloat * len(self.vertices))(*self.vertices)
+                self.triangle_count = len(self.vertices) / 8
+            glInterleavedArrays(GL_T2F_N3F_V3F, 0, self.gl_floats)
+            glDrawArrays(GL_TRIANGLES, 0, int(self.triangle_count))
         else:
-            glDisable(GL_TEXTURE_2D)
-
-        glMaterialfv(face, GL_DIFFUSE, self.gl_light(self.diffuse) )
-        glMaterialfv(face, GL_AMBIENT, self.gl_light(self.ambient) )
-        glMaterialfv(face, GL_SPECULAR, self.gl_light(self.specular) )
-        glMaterialfv(face, GL_EMISSION, self.gl_light(self.emissive) )
-        glMaterialf(face, GL_SHININESS, self.shininess)
-
-        if self.gl_floats is None:
-            self.gl_floats = (GLfloat * len(self.vertices))(*self.vertices)
-            self.triangle_count = len(self.vertices) / 8
-        glInterleavedArrays(GL_T2F_N3F_V3F, 0, self.gl_floats)
-        glDrawArrays(GL_TRIANGLES, 0, int(self.triangle_count))
+            print("pyglet not loaded, can't to OpenGL Voodoo.")
 
 class MaterialParser(parser.Parser):
     """Object to parse lines of a materials definition file."""

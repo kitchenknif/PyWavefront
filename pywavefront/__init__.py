@@ -32,11 +32,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
-try:
-    from pyglet.gl import *
-except ImportError as e:
-    print(e)
-    pass
+#try:
+#    from pyglet.gl import *
+#except ImportError as e:
+#    pyglet = None
+#    print(e)
+#    pass
 
 import pywavefront.material
 import pywavefront.mesh

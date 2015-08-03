@@ -31,9 +31,12 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+import sys
+
 try:
     import pyglet
 except ImportError as e:
+    pyglet = None
     print(e)
     pass
 
@@ -42,16 +45,24 @@ class Parser(object):
     reside in subclasses."""
 
     def read_file(self, file_name):
-        for line in pyglet.resource.file(file_name):
+        if pyglet:
+            f = pyglet.resource.file(file_name)
+        else:
+            print("pyglet not loaded, using internal file loader")
+            f = open(file_name)
+
+        for line in f:
             self.parse(line)
 
     def parse(self, line):
         """Determine what type of line we are and dispatch
         appropriately."""
-        if line.startswith("#".encode("utf-8")): return
+        if line.startswith("#".encode("utf-8")):
+            return
 
         values = line.split()
-        if len(values) < 2: return
+        if len(values) < 2:
+            return
 
         line_type = values[0].decode("utf-8")
         args = values[1:]
@@ -60,5 +71,5 @@ class Parser(object):
             args[0] = arg.decode("utf-8")
             i += 1
 
-        parse_function = getattr(self, 'parse_%s'%line_type)
+        parse_function = getattr(self, 'parse_%s' % line_type)
         parse_function(args)

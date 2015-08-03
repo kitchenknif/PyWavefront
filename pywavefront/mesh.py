@@ -32,9 +32,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
+import sys
 try:
     from pyglet.gl import *
 except ImportError as e:
+    pyglet = None
     print(e)
     pass
 
@@ -58,11 +60,14 @@ class Mesh(object):
         self.materials.append(material)
 
     def draw(self):
-        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
-        glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT)
-        glEnable(GL_CULL_FACE)
-        glCullFace(GL_BACK)
-        for material in self.materials:
-            material.draw()
-        glPopAttrib()
-        glPopClientAttrib()
+        if pyglet:
+            glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
+            glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT)
+            glEnable(GL_CULL_FACE)
+            glCullFace(GL_BACK)
+            for material in self.materials:
+                material.draw()
+            glPopAttrib()
+            glPopClientAttrib()
+        else:
+            print("pyglet not loaded, can't to OpenGL Voodoo.")
